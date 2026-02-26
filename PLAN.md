@@ -1,35 +1,53 @@
-# Plan: Add README.md
+# Plan: Create PR for README to main
 
 ## Summary
 
-Create a `README.md` file for the Test Repo project. The README will include the project name, a description of the repository's purpose as a test repository for the agent-container system, basic setup instructions covering cloning, installing dependencies, and starting the project, and a section on contributing. No existing files need modification.
+Create a Pull Request from the `feature/add-readme` branch to `main` using the `gh` CLI. The branch already contains a committed `README.md` with project info, setup instructions, and contributing guidelines. No files need to be created or modified — the only action is to push the branch (if needed) and open the PR with the specified title and body.
 
 ## Files to Create
 
-| File | Purpose |
-|------|---------|
-| `README.md` | Project documentation with name, description, setup instructions, and contributing guidelines |
+None. This task only involves creating a GitHub Pull Request.
 
 ## Files to Modify
 
-None. This is a new file addition to a repository that currently only contains `.gitattributes`.
+None. The task explicitly requires no file modifications.
 
 ## Implementation Steps
 
-1. **Create `README.md`** at the repository root with the following sections:
-   - **Project title**: `# Test Repo`
-   - **Description**: A short paragraph explaining this is a test repository for the agent-container system.
-   - **Setup / Getting Started**: Step-by-step instructions:
-     1. `git clone <repo-url>`
-     2. `npm install`
-     3. `npm start`
-   - **Contributing**: A section describing how others can contribute (fork, branch, PR workflow).
+1. **Ensure the branch is pushed to the remote**: Run `git push -u origin feature/add-readme` so the remote has the latest commits.
+2. **Create the Pull Request**: Run `gh pr create` with:
+   - `--base main` to target the main branch
+   - `--head feature/add-readme` for the source branch
+   - `--title "Add README.md"`
+   - `--body` describing that this adds a README with project info, setup instructions, and contributing guidelines
 
-2. **Verify** the file renders correctly and contains all required sections.
+   Full command:
+   ```bash
+   gh pr create \
+     --base main \
+     --head feature/add-readme \
+     --title "Add README.md" \
+     --body "$(cat <<'EOF'
+   ## Summary
+   - Adds a README.md to the repository with project information, setup instructions, and contributing guidelines
+
+   ## Details
+   This PR introduces the initial `README.md` for the project, covering:
+   - **Project info**: Name and description of the test repository for the agent-container system
+   - **Setup instructions**: Steps to clone, install dependencies, and start the project
+   - **Contributing guidelines**: Fork-and-PR workflow for contributors
+
+   ## Test plan
+   - [ ] Verify README.md renders correctly on GitHub
+   - [ ] Confirm all sections (project info, setup, contributing) are present
+
+   🤖 Generated with [Claude Code](https://claude.com/claude-code)
+   EOF
+   )"
+   ```
 
 ## Testing
 
-- Confirm `README.md` exists at the repository root.
-- Confirm it contains all four required sections: project name, description, setup instructions, and contributing.
-- Confirm Markdown renders correctly (e.g., headings, code blocks, list formatting).
-- Run `git diff` to review the addition before committing.
+- Verify the PR was created successfully by checking the URL returned by `gh pr create`.
+- Run `gh pr view` to confirm the PR title, body, base branch, and head branch are correct.
+- Confirm no files were modified during this process (`git status` should show a clean working tree, aside from this PLAN.md).
