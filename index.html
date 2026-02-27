@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hola a todos</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+    }
+  </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
     #bg-cube {
@@ -114,7 +119,7 @@
     }
   </style>
 </head>
-<body class="bg-white min-h-screen flex flex-col">
+<body class="bg-white dark:bg-gray-900 min-h-screen flex flex-col transition-colors duration-300">
   <div id="welcome-modal">
     <div class="modal-content">
       <h2 class="text-2xl font-bold text-gray-800 mb-4">¡Bienvenido/a!</h2>
@@ -132,13 +137,14 @@
   </div>
   <canvas id="bg-cube"></canvas>
   <div id="flying-plane">✈️</div>
-  <nav class="relative z-10 bg-white shadow-md px-6 py-4 flex items-center justify-between">
+  <nav class="relative z-10 bg-white dark:bg-gray-800 shadow-md transition-colors duration-300 px-6 py-4 flex items-center justify-between">
     <a href="index.html" class="text-xl font-bold">
       <span class="text-blue-500">H</span><span class="text-red-500">o</span><span class="text-yellow-400">l</span><span class="text-blue-500">a</span>
     </a>
-    <div class="flex gap-6 text-lg">
+    <div class="flex gap-6 text-lg items-center">
+      <button id="theme-toggle" class="text-2xl hover:scale-110 transition-transform p-1" aria-label="Toggle Dark Mode">☀️</button>
       <a href="index.html" class="text-blue-500 font-semibold hover:text-blue-700">Home</a>
-      <a href="about.html" class="text-gray-600 hover:text-blue-500">About Us</a>
+      <a href="about.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500">About Us</a>
     </div>
   </nav>
   <main class="relative z-10 flex-1 flex flex-col items-center justify-center">
@@ -151,9 +157,9 @@
     </h1>
     <p class="mt-6 text-lg text-gray-400 tracking-wide">Bienvenidos a nuestra página</p>
   </main>
-<footer class="bg-gray-50 py-8 border-t border-gray-200 relative z-10">
+<footer class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300 py-8 border-t border-gray-200 dark:border-gray-800 relative z-10">
   <div class="container mx-auto px-6 flex flex-col items-center">
-    <p class="text-gray-600 mb-4 text-center">
+    <p class="text-gray-600 dark:text-gray-400 mb-4 text-center">
       © 2024 Agile Agents Playground. All rights reserved.
     </p>
     <div class="flex gap-6">
@@ -167,5 +173,6 @@
   <script src="js/cube.js"></script>
   <script src="js/welcome-modal.js"></script>
   <script src="js/plane.js"></script>
+  <script src="js/theme.js"></script>
 </body>
 </html>
