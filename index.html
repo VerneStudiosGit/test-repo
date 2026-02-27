@@ -16,6 +16,47 @@
       z-index: 0;
       pointer-events: none;
     }
+
+    h1 > span {
+      display: inline-block;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+
+    /* The hovered character */
+    h1 > span:hover {
+      transform: translateY(-24px);
+    }
+
+    /* Next sibling (1 away) */
+    h1 > span:hover + span {
+      transform: translateY(-16px);
+    }
+
+    /* Previous sibling (1 away) */
+    h1 > span:has(+ span:hover) {
+      transform: translateY(-16px);
+    }
+
+    /* 2 away forward */
+    h1 > span:hover + span + span {
+      transform: translateY(-8px);
+    }
+
+    /* 2 away backward */
+    h1 > span:has(+ span + span:hover) {
+      transform: translateY(-8px);
+    }
+
+    /* 3 away forward */
+    h1 > span:hover + span + span + span {
+      transform: translateY(-4px);
+    }
+
+    /* 3 away backward */
+    h1 > span:has(+ span + span + span:hover) {
+      transform: translateY(-4px);
+    }
   </style>
 </head>
 <body class="bg-white min-h-screen flex flex-col">
@@ -32,9 +73,9 @@
   <main class="relative z-10 flex-1 flex flex-col items-center justify-center">
     <h1 class="text-6xl sm:text-8xl font-bold tracking-tight select-none">
       <span class="text-blue-500">H</span><span class="text-red-500">o</span><span class="text-yellow-400">l</span><span class="text-blue-500">a</span>
-      <span class="mx-2"></span>
+      <span class="mx-1">&nbsp;</span>
       <span class="text-green-500">a</span>
-      <span class="mx-2"></span>
+      <span class="mx-1">&nbsp;</span>
       <span class="text-red-500">t</span><span class="text-blue-500">o</span><span class="text-yellow-400">d</span><span class="text-green-500">o</span><span class="text-red-500">s</span>
     </h1>
     <p class="mt-6 text-lg text-gray-400 tracking-wide">Bienvenidos a nuestra página</p>
