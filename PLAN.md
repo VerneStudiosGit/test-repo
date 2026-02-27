@@ -1,69 +1,60 @@
-# Plan: 3D Rotating Wireframe Cube on Landing Page
+# Plan: Modal de Bienvenida
 
 ## Summary
 
-Add a rotating 3D wireframe cube to the landing page (`index.html`) using Three.js loaded via CDN. The cube will be rendered on a full-screen canvas positioned behind the existing text content, creating a cool technological background effect. Since this is a static HTML project with no build tools (Tailwind CSS via CDN), Three.js will also be loaded via CDN, keeping the approach consistent with the existing architecture.
+Se creará un modal de bienvenida que aparezca al cargar la página principal (`index.html`), explicando al usuario en español que este repositorio es una zona de juegos para hacer pruebas con un sistema de agentes que usan metodología agile y scrum. El modal seguirá los patrones existentes del proyecto: HTML semántico, Tailwind CSS vía CDN para estilos, y JavaScript vanilla sin dependencias adicionales. Incluirá un botón para cerrar el modal y una animación sutil de entrada.
 
 ## Files to Create
 
-| File | Purpose |
-|------|---------|
-| `js/cube.js` | Three.js scene setup: creates a wireframe cube, camera, renderer, and animation loop. Handles window resizing. |
+| Archivo | Propósito |
+|---------|-----------|
+| `js/welcome-modal.js` | Script vanilla JS que gestiona la visualización y cierre del modal de bienvenida. |
 
 ## Files to Modify
 
-| File | Changes |
-|------|---------|
-| `index.html` | 1. Add Three.js CDN `<script>` tag in `<head>`. 2. Add a `<canvas>` element for the 3D scene. 3. Add inline `<style>` to position the canvas as a fixed fullscreen background (behind all content via `z-index`). 4. Add `<script>` tag to load `js/cube.js` before `</body>`. 5. Add `relative z-10` Tailwind classes to nav and main so they stay above the canvas. |
+| Archivo | Cambios |
+|---------|---------|
+| `index.html` | 1. Agregar el markup HTML del modal de bienvenida dentro del `<body>`. 2. Agregar estilos CSS para la animación del modal en el bloque `<style>` existente. 3. Incluir el script `js/welcome-modal.js` antes del cierre de `</body>`. |
 
 ## Implementation Steps
 
-### Step 1: Create `js/cube.js`
+### 1. Agregar estilos CSS del modal en `index.html`
 
-Create a new `js/` directory and `js/cube.js` file with the following logic:
+Añadir al bloque `<style>` existente las siguientes reglas:
+- **Overlay** (`#welcome-modal`): fondo semi-transparente oscuro (`rgba(0,0,0,0.5)`), posición fixed, `inset: 0`, display flex centrado, `z-index: 50` para estar por encima de todo.
+- **Contenedor del modal** (`.modal-content`): fondo blanco, bordes redondeados (`rounded-2xl`), sombra, padding, max-width responsivo (~`28rem`), animación de entrada.
+- **Animación de entrada**: `@keyframes modalFadeIn` con transición de opacidad (0→1) y escala (0.95→1).
+- **Clase `.hidden`**: `display: none` para ocultar el modal al cerrarlo.
 
-- Use the global `THREE` object (loaded via CDN).
-- Create a `Scene`, `PerspectiveCamera`, and `WebGLRenderer` targeting a canvas element with id `bg-cube`.
-- Set renderer to fill the viewport with a transparent background (`alpha: true`).
-- Create a `BoxGeometry` (cube) and apply a `MeshBasicMaterial` with `wireframe: true` and color `#3b82f6` (Tailwind blue-500, matching the site's accent).
-- Add the wireframe cube `Mesh` to the scene.
-- Position the camera at `z = 3` so the cube is nicely visible and centered.
-- Create an `animate()` loop using `requestAnimationFrame` that rotates the cube slowly on both X and Y axes each frame.
-- Add a `window.resize` event listener to keep camera aspect ratio and renderer size in sync with viewport.
+### 2. Agregar el HTML del modal en `index.html`
 
-### Step 2: Modify `index.html`
+Insertar justo después de la apertura de `<body>` (antes de `<canvas>`):
+- Un `<div id="welcome-modal">` overlay que cubra toda la pantalla.
+- Dentro, un `<div class="modal-content">` contenedor con:
+  - Encabezado: texto "¡Bienvenido/a!" en un `<h2>` grande y bold.
+  - Párrafo principal explicando que este repositorio es una **zona de juegos** (playground) para hacer pruebas con un **sistema de agentes** que utilizan metodología **agile y scrum**.
+  - Un segundo párrafo corto invitando a explorar libremente.
+  - Botón `<button id="close-modal">` con texto "¡Entendido!" estilizado con Tailwind (fondo azul, texto blanco, hover).
 
-- Add Three.js CDN script in `<head>` (after Tailwind):
-  ```html
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  ```
+### 3. Crear `js/welcome-modal.js`
 
-- Add inline `<style>` block in `<head>`:
-  ```css
-  #bg-cube {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none;
-  }
-  ```
+Script vanilla JS (IIFE) que:
+- Selecciona el overlay por `id="welcome-modal"`.
+- Selecciona el botón por `id="close-modal"`.
+- Al hacer click en el botón, oculta el modal añadiendo la clase `hidden`.
+- Al hacer click en el overlay (fuera del contenedor del modal), también cierra el modal. Usa `event.target === overlay` para evitar cerrar al hacer click dentro del contenido.
 
-- Add `<canvas id="bg-cube"></canvas>` as the first child inside `<body>`.
+### 4. Incluir el script en `index.html`
 
-- Add Tailwind utility classes `relative z-10` to the `<nav>` and `<main>` elements so they render above the canvas.
-
-- Add script tag before closing `</body>`:
-  ```html
-  <script src="js/cube.js"></script>
-  ```
+Agregar `<script src="js/welcome-modal.js"></script>` después de la línea de `cube.js`.
 
 ## Testing
 
-1. **Visual verification**: Open `index.html` in a browser. A rotating wireframe cube should be visible centered on the page behind the "Hola a todos" text.
-2. **Text readability**: Confirm that the navbar and main heading text remain fully visible and clickable on top of the cube.
-3. **Responsiveness**: Resize the browser window — the canvas and cube should adapt to the new viewport size without clipping or overflow.
-4. **No scrollbars**: The canvas should not introduce extra scrollbars or affect page layout.
-5. **About page unaffected**: Navigate to `about.html` and confirm it is unchanged.
+1. **Abrir `index.html` en el navegador**: El modal debe aparecer centrado con fondo oscuro semi-transparente.
+2. **Verificar contenido**: El texto debe estar en español y explicar el propósito del repositorio (zona de juegos, agentes, agile/scrum).
+3. **Cerrar con botón**: Al hacer click en "¡Entendido!" el modal debe desaparecer.
+4. **Cerrar con overlay**: Al hacer click fuera del modal (en el fondo oscuro) el modal debe cerrarse.
+5. **Responsividad**: El modal debe verse correctamente en mobile (ancho reducido) y desktop.
+6. **Z-index**: El modal debe estar por encima del navbar, el canvas 3D y todos los demás elementos.
+7. **Recargar página**: El modal debe volver a aparecer (comportamiento deseado para un playground).
+8. **About page**: Verificar que `about.html` no se vea afectada.

@@ -16,9 +16,101 @@
       z-index: 0;
       pointer-events: none;
     }
+
+    h1 > span {
+      display: inline-block;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+
+    /* The hovered character */
+    h1 > span:hover {
+      transform: translateY(-24px);
+    }
+
+    /* Next sibling (1 away) */
+    h1 > span:hover + span {
+      transform: translateY(-16px);
+    }
+
+    /* Previous sibling (1 away) */
+    h1 > span:has(+ span:hover) {
+      transform: translateY(-16px);
+    }
+
+    /* 2 away forward */
+    h1 > span:hover + span + span {
+      transform: translateY(-8px);
+    }
+
+    /* 2 away backward */
+    h1 > span:has(+ span + span:hover) {
+      transform: translateY(-8px);
+    }
+
+    /* 3 away forward */
+    h1 > span:hover + span + span + span {
+      transform: translateY(-4px);
+    }
+
+    /* 3 away backward */
+    h1 > span:has(+ span + span + span:hover) {
+      transform: translateY(-4px);
+    }
+
+    /* Welcome modal */
+    #welcome-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+
+    #welcome-modal .modal-content {
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      padding: 2rem;
+      max-width: 28rem;
+      width: 90%;
+      animation: modalFadeIn 0.3s ease-out;
+    }
+
+    @keyframes modalFadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    #welcome-modal.hidden {
+      display: none;
+    }
   </style>
 </head>
 <body class="bg-white min-h-screen flex flex-col">
+  <div id="welcome-modal">
+    <div class="modal-content">
+      <h2 class="text-2xl font-bold text-gray-800 mb-4">¡Bienvenido/a!</h2>
+      <p class="text-gray-600 mb-3">
+        Este repositorio es una <strong>zona de juegos</strong> (playground) para hacer pruebas con un
+        <strong>sistema de agentes</strong> que utilizan metodología <strong>agile y scrum</strong>.
+      </p>
+      <p class="text-gray-500 mb-6">
+        Siéntete libre de explorar y experimentar. ¡Todo vale aquí!
+      </p>
+      <button id="close-modal" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+        ¡Entendido!
+      </button>
+    </div>
+  </div>
   <canvas id="bg-cube"></canvas>
   <nav class="relative z-10 bg-white shadow-md px-6 py-4 flex items-center justify-between">
     <a href="index.html" class="text-xl font-bold">
@@ -32,13 +124,14 @@
   <main class="relative z-10 flex-1 flex flex-col items-center justify-center">
     <h1 class="text-6xl sm:text-8xl font-bold tracking-tight select-none">
       <span class="text-blue-500">H</span><span class="text-red-500">o</span><span class="text-yellow-400">l</span><span class="text-blue-500">a</span>
-      <span class="mx-2"></span>
+      <span class="mx-1">&nbsp;</span>
       <span class="text-green-500">a</span>
-      <span class="mx-2"></span>
+      <span class="mx-1">&nbsp;</span>
       <span class="text-red-500">t</span><span class="text-blue-500">o</span><span class="text-yellow-400">d</span><span class="text-green-500">o</span><span class="text-red-500">s</span>
     </h1>
     <p class="mt-6 text-lg text-gray-400 tracking-wide">Bienvenidos a nuestra página</p>
   </main>
   <script src="js/cube.js"></script>
+  <script src="js/welcome-modal.js"></script>
 </body>
 </html>
