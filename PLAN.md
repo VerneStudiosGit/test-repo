@@ -1,62 +1,62 @@
-# Plan: Animación de avión volando
+# Plan: Sección "Hola Mami" con imagen
 
 ## Summary
 
-Se implementará una animación de un avión (usando el emoji ✈️) que se desplaza continuamente de izquierda a derecha a través de la pantalla, simulando que está volando. Cuando el avión sale completamente por el borde derecho, reaparece por el borde izquierdo creando un efecto de loop infinito. La implementación seguirá los patrones existentes del proyecto: CSS `@keyframes` para la animación y un archivo JavaScript separado en `js/` con el patrón IIFE para controlar el comportamiento.
+Se creará una nueva sección en `index.html` debajo del contenido principal existente con un título "Hola Mami" estilizado con los colores del proyecto, acompañado de una imagen de una mamá con su hijo. Se creará un directorio `images/` para almacenar la imagen descargada de Internet (fuente libre de derechos). La sección usará Tailwind CSS siguiendo los patrones del proyecto: layout con flexbox, tipografía colorida con `<span>` por letra, y diseño responsive. La imagen y el texto estarán lado a lado en pantallas grandes y apilados en móviles.
 
 ## Files to Create
 
 | File | Purpose |
 |------|---------|
-| `js/plane.js` | Script que inicializa el elemento del avión y agrega variación aleatoria en la altura de vuelo entre cada ciclo usando el evento `animationiteration`. Usa el patrón IIFE consistente con `cube.js` y `welcome-modal.js`. |
+| `images/mama-hijo.jpg` | Imagen descargada de Internet (libre de derechos) que muestra a una mamá con su hijo. Se almacena en un nuevo directorio `images/` siguiendo convenciones estándar de proyectos web. |
 
 ## Files to Modify
 
 | File | Changes |
 |------|---------|
-| `index.html` | 1. Agregar estilos CSS para el avión (`#flying-plane`) con `position: fixed`, `z-index: 10`, `pointer-events: none` y la animación `@keyframes flyAcross` que mueve el avión de fuera de la pantalla por la izquierda hasta fuera por la derecha. 2. Agregar el elemento HTML `<div id="flying-plane">✈️</div>` en el body. 3. Agregar `<script src="js/plane.js"></script>` al final del body junto a los otros scripts. |
+| `index.html` | 1. Agregar una nueva sección `<section>` después del `<main>` existente (o dentro del `<main>`, después del contenido actual) con: un título `<h2>` "Hola Mami" con letras coloreadas individualmente usando `<span>` (patrón existente del proyecto), y una imagen `<img>` referenciando `images/mama-hijo.jpg`. 2. Usar clases Tailwind para layout responsive: `flex-row` en desktop y `flex-col` en móvil, centrado, con espaciado adecuado. 3. Agregar `alt` descriptivo a la imagen para accesibilidad. |
 
 ## Implementation Steps
 
-### 1. Agregar CSS en `index.html`
+### 1. Crear directorio `images/`
 
-Dentro del bloque `<style>` existente, agregar los estilos para `#flying-plane`:
-- `position: fixed` para que flote sobre el contenido
-- `top: 15%` para posicionarlo en la parte superior de la pantalla
-- `left: 0` como punto de referencia
-- `z-index: 10` para que esté por encima del contenido pero debajo del modal (z-index 50)
-- `font-size: 3rem` para un tamaño visible del emoji
-- `pointer-events: none` para no interferir con clics
-- `animation: flyAcross 8s linear infinite` para el movimiento continuo
+Crear el directorio `images/` en la raíz del proyecto para almacenar recursos gráficos.
 
-### 2. Agregar `@keyframes flyAcross`
+### 2. Descargar imagen de mamá e hijo
 
-Definir la animación CSS:
-- `from { transform: translateX(-100px); }` — empieza fuera de la pantalla por la izquierda
-- `to { transform: translateX(calc(100vw + 100px)); }` — termina fuera de la pantalla por la derecha
-- `linear` timing para velocidad constante de vuelo
-- `infinite` para loop automático (al terminar, CSS reinicia desde `from`)
+Buscar y descargar una imagen libre de derechos (de fuentes como Unsplash, Pexels o Pixabay) que muestre a una mamá con su hijo. Guardarla como `images/mama-hijo.jpg`. Optimizar el tamaño si es necesario para que no sea excesivamente pesada.
 
-### 3. Agregar elemento HTML en `index.html`
+### 3. Agregar sección "Hola Mami" en `index.html`
 
-Insertar `<div id="flying-plane">✈️</div>` después del `<canvas id="bg-cube">` y antes del `<nav>`, manteniendo el orden lógico de capas visuales.
+Dentro del `<main>`, después del `<p>` de bienvenida (línea 152), agregar una nueva sección con la siguiente estructura:
 
-### 4. Crear `js/plane.js`
+```html
+<section class="flex flex-col sm:flex-row items-center justify-center gap-8 mt-16 mb-12 px-6">
+  <img src="images/mama-hijo.jpg" alt="Mamá con su hijo" class="w-64 h-64 object-cover rounded-2xl shadow-lg" />
+  <h2 class="text-4xl sm:text-6xl font-bold tracking-tight select-none">
+    <span class="text-red-500">H</span><span class="text-pink-500">o</span><span class="text-yellow-400">l</span><span class="text-red-500">a</span>
+    <span class="mx-1">&nbsp;</span>
+    <span class="text-pink-500">M</span><span class="text-red-500">a</span><span class="text-yellow-400">m</span><span class="text-pink-500">i</span>
+  </h2>
+</section>
+```
 
-Script con patrón IIFE que:
-- Selecciona el elemento `#flying-plane`
-- Escucha el evento `animationiteration` para detectar cuándo completa un ciclo
-- En cada iteración, cambia aleatoriamente la posición vertical (`top`) entre 10% y 80% para que el avión no siempre vuele a la misma altura exacta
+Detalles de diseño:
+- **Layout**: `flex-col` en móvil (imagen arriba, texto abajo), `sm:flex-row` en desktop (imagen a la izquierda, texto a la derecha)
+- **Imagen**: Tamaño fijo `w-64 h-64`, `object-cover` para que no se deforme, bordes redondeados `rounded-2xl` y sombra `shadow-lg`
+- **Título**: Sigue el patrón de letras coloreadas con `<span>`, usando tonos cálidos (rojo, rosa, amarillo) acorde a la temática maternal
+- **Espaciado**: `gap-8` entre imagen y texto, `mt-16` para separar del contenido superior, `mb-12` para espacio inferior
+- **Z-index**: Hereda `relative z-10` del `<main>` padre, manteniéndose sobre el cubo 3D de fondo
 
-### 5. Incluir el script en `index.html`
+### 4. Verificar la referencia a la imagen
 
-Agregar `<script src="js/plane.js"></script>` después de los scripts existentes al final del `<body>`.
+Asegurar que la ruta `images/mama-hijo.jpg` en el atributo `src` del `<img>` coincide exactamente con la ubicación del archivo descargado.
 
 ## Testing
 
-1. **Verificación visual**: Abrir `index.html` en el navegador y confirmar que el emoji ✈️ aparece y se desplaza suavemente de izquierda a derecha.
-2. **Loop infinito**: Esperar a que el avión salga por la derecha y verificar que reaparece por la izquierda sin saltos ni pausas visibles.
-3. **Variación de altura**: Después de varios ciclos, confirmar que el avión vuela a alturas distintas cada vez.
-4. **No interferencia**: Confirmar que el avión no bloquea clics en la navegación, el heading interactivo ni el botón del modal.
-5. **Responsive**: Verificar que la animación funciona correctamente en diferentes tamaños de ventana.
-6. **Coexistencia**: Confirmar que el cubo 3D, la animación de caracteres del heading y el modal de bienvenida siguen funcionando correctamente.
+1. **Verificación visual**: Abrir `index.html` en el navegador y confirmar que la nueva sección aparece debajo del contenido principal con la imagen y el texto "Hola Mami" lado a lado.
+2. **Carga de imagen**: Verificar que la imagen se carga correctamente sin errores 404 en la consola del navegador.
+3. **Responsive**: Reducir el ancho del navegador y confirmar que en móvil la imagen y el texto se apilan verticalmente (`flex-col`) y en desktop están lado a lado (`flex-row`).
+4. **Estilo consistente**: Verificar que las letras coloreadas del título siguen el mismo patrón visual que el título "Hola a todos" existente.
+5. **Coexistencia**: Confirmar que el cubo 3D, la animación del avión, el heading interactivo y el modal de bienvenida siguen funcionando correctamente.
+6. **Accesibilidad**: Verificar que la imagen tiene un atributo `alt` descriptivo.
