@@ -1,60 +1,62 @@
-# Plan: Modal de Bienvenida
+# Plan: Animación de avión volando
 
 ## Summary
 
-Se creará un modal de bienvenida que aparezca al cargar la página principal (`index.html`), explicando al usuario en español que este repositorio es una zona de juegos para hacer pruebas con un sistema de agentes que usan metodología agile y scrum. El modal seguirá los patrones existentes del proyecto: HTML semántico, Tailwind CSS vía CDN para estilos, y JavaScript vanilla sin dependencias adicionales. Incluirá un botón para cerrar el modal y una animación sutil de entrada.
+Se implementará una animación de un avión (usando el emoji ✈️) que se desplaza continuamente de izquierda a derecha a través de la pantalla, simulando que está volando. Cuando el avión sale completamente por el borde derecho, reaparece por el borde izquierdo creando un efecto de loop infinito. La implementación seguirá los patrones existentes del proyecto: CSS `@keyframes` para la animación y un archivo JavaScript separado en `js/` con el patrón IIFE para controlar el comportamiento.
 
 ## Files to Create
 
-| Archivo | Propósito |
-|---------|-----------|
-| `js/welcome-modal.js` | Script vanilla JS que gestiona la visualización y cierre del modal de bienvenida. |
+| File | Purpose |
+|------|---------|
+| `js/plane.js` | Script que inicializa el elemento del avión y agrega variación aleatoria en la altura de vuelo entre cada ciclo usando el evento `animationiteration`. Usa el patrón IIFE consistente con `cube.js` y `welcome-modal.js`. |
 
 ## Files to Modify
 
-| Archivo | Cambios |
-|---------|---------|
-| `index.html` | 1. Agregar el markup HTML del modal de bienvenida dentro del `<body>`. 2. Agregar estilos CSS para la animación del modal en el bloque `<style>` existente. 3. Incluir el script `js/welcome-modal.js` antes del cierre de `</body>`. |
+| File | Changes |
+|------|---------|
+| `index.html` | 1. Agregar estilos CSS para el avión (`#flying-plane`) con `position: fixed`, `z-index: 10`, `pointer-events: none` y la animación `@keyframes flyAcross` que mueve el avión de fuera de la pantalla por la izquierda hasta fuera por la derecha. 2. Agregar el elemento HTML `<div id="flying-plane">✈️</div>` en el body. 3. Agregar `<script src="js/plane.js"></script>` al final del body junto a los otros scripts. |
 
 ## Implementation Steps
 
-### 1. Agregar estilos CSS del modal en `index.html`
+### 1. Agregar CSS en `index.html`
 
-Añadir al bloque `<style>` existente las siguientes reglas:
-- **Overlay** (`#welcome-modal`): fondo semi-transparente oscuro (`rgba(0,0,0,0.5)`), posición fixed, `inset: 0`, display flex centrado, `z-index: 50` para estar por encima de todo.
-- **Contenedor del modal** (`.modal-content`): fondo blanco, bordes redondeados (`rounded-2xl`), sombra, padding, max-width responsivo (~`28rem`), animación de entrada.
-- **Animación de entrada**: `@keyframes modalFadeIn` con transición de opacidad (0→1) y escala (0.95→1).
-- **Clase `.hidden`**: `display: none` para ocultar el modal al cerrarlo.
+Dentro del bloque `<style>` existente, agregar los estilos para `#flying-plane`:
+- `position: fixed` para que flote sobre el contenido
+- `top: 15%` para posicionarlo en la parte superior de la pantalla
+- `left: 0` como punto de referencia
+- `z-index: 10` para que esté por encima del contenido pero debajo del modal (z-index 50)
+- `font-size: 3rem` para un tamaño visible del emoji
+- `pointer-events: none` para no interferir con clics
+- `animation: flyAcross 8s linear infinite` para el movimiento continuo
 
-### 2. Agregar el HTML del modal en `index.html`
+### 2. Agregar `@keyframes flyAcross`
 
-Insertar justo después de la apertura de `<body>` (antes de `<canvas>`):
-- Un `<div id="welcome-modal">` overlay que cubra toda la pantalla.
-- Dentro, un `<div class="modal-content">` contenedor con:
-  - Encabezado: texto "¡Bienvenido/a!" en un `<h2>` grande y bold.
-  - Párrafo principal explicando que este repositorio es una **zona de juegos** (playground) para hacer pruebas con un **sistema de agentes** que utilizan metodología **agile y scrum**.
-  - Un segundo párrafo corto invitando a explorar libremente.
-  - Botón `<button id="close-modal">` con texto "¡Entendido!" estilizado con Tailwind (fondo azul, texto blanco, hover).
+Definir la animación CSS:
+- `from { transform: translateX(-100px); }` — empieza fuera de la pantalla por la izquierda
+- `to { transform: translateX(calc(100vw + 100px)); }` — termina fuera de la pantalla por la derecha
+- `linear` timing para velocidad constante de vuelo
+- `infinite` para loop automático (al terminar, CSS reinicia desde `from`)
 
-### 3. Crear `js/welcome-modal.js`
+### 3. Agregar elemento HTML en `index.html`
 
-Script vanilla JS (IIFE) que:
-- Selecciona el overlay por `id="welcome-modal"`.
-- Selecciona el botón por `id="close-modal"`.
-- Al hacer click en el botón, oculta el modal añadiendo la clase `hidden`.
-- Al hacer click en el overlay (fuera del contenedor del modal), también cierra el modal. Usa `event.target === overlay` para evitar cerrar al hacer click dentro del contenido.
+Insertar `<div id="flying-plane">✈️</div>` después del `<canvas id="bg-cube">` y antes del `<nav>`, manteniendo el orden lógico de capas visuales.
 
-### 4. Incluir el script en `index.html`
+### 4. Crear `js/plane.js`
 
-Agregar `<script src="js/welcome-modal.js"></script>` después de la línea de `cube.js`.
+Script con patrón IIFE que:
+- Selecciona el elemento `#flying-plane`
+- Escucha el evento `animationiteration` para detectar cuándo completa un ciclo
+- En cada iteración, cambia aleatoriamente la posición vertical (`top`) entre 10% y 80% para que el avión no siempre vuele a la misma altura exacta
+
+### 5. Incluir el script en `index.html`
+
+Agregar `<script src="js/plane.js"></script>` después de los scripts existentes al final del `<body>`.
 
 ## Testing
 
-1. **Abrir `index.html` en el navegador**: El modal debe aparecer centrado con fondo oscuro semi-transparente.
-2. **Verificar contenido**: El texto debe estar en español y explicar el propósito del repositorio (zona de juegos, agentes, agile/scrum).
-3. **Cerrar con botón**: Al hacer click en "¡Entendido!" el modal debe desaparecer.
-4. **Cerrar con overlay**: Al hacer click fuera del modal (en el fondo oscuro) el modal debe cerrarse.
-5. **Responsividad**: El modal debe verse correctamente en mobile (ancho reducido) y desktop.
-6. **Z-index**: El modal debe estar por encima del navbar, el canvas 3D y todos los demás elementos.
-7. **Recargar página**: El modal debe volver a aparecer (comportamiento deseado para un playground).
-8. **About page**: Verificar que `about.html` no se vea afectada.
+1. **Verificación visual**: Abrir `index.html` en el navegador y confirmar que el emoji ✈️ aparece y se desplaza suavemente de izquierda a derecha.
+2. **Loop infinito**: Esperar a que el avión salga por la derecha y verificar que reaparece por la izquierda sin saltos ni pausas visibles.
+3. **Variación de altura**: Después de varios ciclos, confirmar que el avión vuela a alturas distintas cada vez.
+4. **No interferencia**: Confirmar que el avión no bloquea clics en la navegación, el heading interactivo ni el botón del modal.
+5. **Responsive**: Verificar que la animación funciona correctamente en diferentes tamaños de ventana.
+6. **Coexistencia**: Confirmar que el cubo 3D, la animación de caracteres del heading y el modal de bienvenida siguen funcionando correctamente.
