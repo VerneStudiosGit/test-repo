@@ -136,6 +136,13 @@
     </div>
   </div>
   <canvas id="bg-cube"></canvas>
+      <div id="game-over" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-75 text-white rounded-lg">
+        <h2 class="text-4xl font-bold mb-4">Game Over</h2>
+        <p id="winner-text" class="text-2xl mb-6"></p>
+        <button id="restart-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+          Jugar de nuevo
+        </button>
+      </div>
   <div id="flying-plane">✈️</div>
   <nav class="relative z-10 bg-white dark:bg-gray-800 shadow-md transition-colors duration-300 px-6 py-4 flex items-center justify-between">
     <a href="index.html" class="text-xl font-bold">
@@ -159,7 +166,14 @@
     </h1>
     <p class="mt-6 text-lg text-gray-400 tracking-wide">Bienvenidos a nuestra página</p>
     <div class="mt-12 relative z-10">
-      <canvas id="pong-canvas" width="600" height="400" class="rounded-lg shadow-2xl border-4 border-gray-700 dark:border-gray-600"></canvas>
+      <canvas id="pongCanvas" width="600" height="400" class="rounded-lg shadow-2xl border-4 border-gray-700 dark:border-gray-600"></canvas>
+      <div id="game-over" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-75 text-white rounded-lg">
+        <h2 class="text-4xl font-bold mb-4">Game Over</h2>
+        <p id="winner-text" class="text-2xl mb-6"></p>
+        <button id="restart-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+          Jugar de nuevo
+        </button>
+      </div>
     </div>
   </main>
 <footer class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300 py-8 border-t border-gray-200 dark:border-gray-800 relative z-10">
