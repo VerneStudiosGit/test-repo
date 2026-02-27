@@ -1,41 +1,83 @@
-# Plan: Página web de bienvenida "Hola a todos"
+# Plan: Character Y-Axis Animation Based on Distance from Cursor
 
 ## Summary
 
-Create a static HTML welcome page using Tailwind CSS (via CDN) that displays "Hola a todos" with a colorful, Google-inspired style on a white background. The page will be created on the `web-test` branch and a Pull Request will be opened to merge it into `main`.
+Add a CSS-only interactive animation to the "Hola a todos" heading where individual letter `<span>` elements animate along the Y axis based on their proximity to the cursor. When the user hovers over a character, that character rises the most (via `translateY`), and adjacent sibling characters rise progressively less, creating a wave/ripple effect. This will be achieved using CSS `:hover` combined with adjacent sibling selectors (`+`) and the `:has()` selector for previous-sibling targeting, along with CSS transitions for smooth movement.
 
 ## Files to Create
 
-- **index.html**: Static HTML page with Tailwind CSS (CDN) displaying "Hola a todos" in colorful Google-style letters on a white background. Will include a clean, centered layout with multi-colored text similar to the Google logo aesthetic.
+None. All changes will be made inline in the existing `index.html`.
 
 ## Files to Modify
 
-None. This is a new page added to the repository.
+| File | Changes |
+|------|---------|
+| `index.html` | Add a `<style>` block with hover-based Y-axis animation using `:hover`, sibling combinators (`+`), and `:has()` for reverse-sibling targeting. Add `inline-block` and `transition` to letter spans. Adjust space spans so they participate as valid siblings in the selector chain. |
 
 ## Implementation Steps
 
-1. **Create `index.html`** in the repository root with:
-   - HTML5 boilerplate
-   - Tailwind CSS via CDN (`<script src="https://cdn.tailwindcss.com">`)
-   - White background, centered content (flexbox)
-   - "Hola a todos" heading with individual letters colored in Google brand colors (blue, red, yellow, blue, green, red pattern)
-   - Clean, modern typography using a sans-serif font
-   - Optional subtitle or decorative element for visual polish
+1. **Add `<style>` block in `<head>`** with the following CSS rules scoped to `h1 > span`:
+   - Base rule: `display: inline-block`, `transition: transform 0.3s ease`, `cursor: pointer`.
+   - Hovered span: `transform: translateY(-24px)` (strongest lift).
+   - 1-away siblings (forward: `span:hover + span`, backward: `span:has(+ span:hover)`): `transform: translateY(-16px)`.
+   - 2-away siblings (forward: `span:hover + span + span`, backward: `span:has(+ span + span:hover)`): `transform: translateY(-8px)`.
+   - 3-away siblings (forward/backward): `transform: translateY(-4px)`.
 
-2. **Commit the changes** on the `web-test` branch with a descriptive commit message.
+2. **Fix space spans**: Convert empty `<span class="mx-2"></span>` to `<span class="mx-1">&nbsp;</span>` so they occupy space and participate as valid siblings in the hover chain.
 
-3. **Push the branch** to the remote: `git push -u origin web-test`
+3. **Scope animation rules** to `h1 > span` only, keeping the subtitle `<p>` unaffected.
 
-4. **Create a Pull Request** from `web-test` to `main` using `gh pr create` with:
-   - Title: "feat: Add welcome page with colorful Google-style greeting"
-   - Body describing the new static page and what it contains
+4. **Fine-tune values**: Adjust `translateY` distances and `transition` duration/easing for a natural wave feel.
+
+## CSS Technique Details
+
+The key CSS selectors:
+
+```css
+/* The hovered character */
+h1 > span:hover {
+  transform: translateY(-24px);
+}
+
+/* Next sibling (1 away) */
+h1 > span:hover + span {
+  transform: translateY(-16px);
+}
+
+/* Previous sibling (1 away) — uses :has() */
+h1 > span:has(+ span:hover) {
+  transform: translateY(-16px);
+}
+
+/* 2 away forward */
+h1 > span:hover + span + span {
+  transform: translateY(-8px);
+}
+
+/* 2 away backward */
+h1 > span:has(+ span + span:hover) {
+  transform: translateY(-8px);
+}
+
+/* 3 away forward */
+h1 > span:hover + span + span + span {
+  transform: translateY(-4px);
+}
+
+/* 3 away backward */
+h1 > span:has(+ span + span + span:hover) {
+  transform: translateY(-4px);
+}
+```
+
+The `:has()` selector is supported in all modern browsers (Chrome 105+, Safari 15.4+, Firefox 121+).
 
 ## Testing
 
-- Open `index.html` in a browser and verify:
-  - White background is displayed
-  - "Hola a todos" appears centered on the page
-  - Letters are colored in a Google-like multi-color pattern
-  - Page is responsive and looks good on different screen sizes
-- Run `git status` to confirm the commit is clean
-- Run `gh pr view` to confirm the PR was created correctly targeting `main`
+1. **Open `index.html` in a modern browser** (Chrome, Firefox, Safari).
+2. **Hover over individual letters** — the hovered letter should rise the most, neighbors should rise progressively less, creating a wave.
+3. **Move the cursor across the text** — the wave should follow smoothly due to CSS transitions.
+4. **Verify the subtitle** ("Bienvenidos a nuestra página") is not affected.
+5. **Verify spacing** between words is preserved.
+6. **Test responsiveness** — animation should work at both mobile and desktop text sizes.
+7. **Test browser compatibility** — confirm `:has()` selector works in Chrome, Firefox, and Safari.
