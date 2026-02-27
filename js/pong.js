@@ -1,151 +1,180 @@
-const canvas = document.getElementById('pongCanvas');
-const ctx = canvas.getContext('2d');
-const gameOverScreen = document.getElementById('game-over');
-const winnerText = document.getElementById('winner-text');
-const restartBtn = document.getElementById('restart-btn');
+/**
+ * PongService handles the rendering and logic of the Pong game.
+ * Supports both integrated canvas and standalone game page.
+ */
+class PongService {
+  constructor(canvasId) {
+    this.canvas = document.getElementById(canvasId);
+    if (!this.canvas) return;
+    this.ctx = this.canvas.getContext('2d');
+    
+    // UI Elements
+    this.gameOverScreen = document.getElementById('game-over');
+    this.winnerText = document.getElementById('winner-text');
+    this.restartBtn = document.getElementById('restart-btn');
+    
+    if (this.restartBtn) {
+      this.restartBtn.addEventListener('click', () => this.resetGame());
+    }
 
-// Game constants
-const PADDLE_WIDTH = 10;
-const PADDLE_HEIGHT = 100;
-const BALL_SIZE = 10;
-const WINNING_SCORE = 5;
+    this.init();
+  }
 
-// Game state
-let playerY = canvas.height / 2 - PADDLE_HEIGHT / 2;
-let aiY = canvas.height / 2 - PADDLE_HEIGHT / 2;
-let ballX = canvas.width / 2;
-let ballY = canvas.height / 2;
-let ballSpeedX = 5;
-let ballSpeedY = 5;
-let playerScore = 0;
-let aiScore = 0;
-let gameRunning = true;
+  init() {
+    this.width = this.canvas.width;
+    this.height = this.canvas.height;
+    this.paddleWidth = 10;
+    this.paddleHeight = 100;
+    this.ballRadius = 8;
+    this.winningScore = 5;
 
-// Controls
-let upPressed = false;
-let downPressed = false;
+    this.resetGame();
+    
+    // Controls
+    this.upPressed = false;
+    this.downPressed = false;
+    document.addEventListener('keydown', (e) => this.handleKeyDown(e));
+    document.addEventListener('keyup', (e) => this.handleKeyUp(e));
+  }
 
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') upPressed = true;
-    if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') downPressed = true;
-});
+  handleKeyDown(e) {
+    if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') this.upPressed = true;
+    if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') this.downPressed = true;
+  }
 
-document.addEventListener('keyup', (e) => {
-    if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') upPressed = false;
-    if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') downPressed = false;
-});
+  handleKeyUp(e) {
+    if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') this.upPressed = false;
+    if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') this.downPressed = false;
+  }
 
-restartBtn.addEventListener('click', resetGame);
+  resetGame() {
+    this.playerScore = 0;
+    this.aiScore = 0;
+    this.playerY = this.height / 2 - this.paddleHeight / 2;
+    this.aiY = this.height / 2 - this.paddleHeight / 2;
+    this.resetBall();
+    this.gameRunning = true;
+    if (this.gameOverScreen) this.gameOverScreen.classList.add('hidden');
+  }
 
-function resetGame() {
-    playerScore = 0;
-    aiScore = 0;
-    playerY = canvas.height / 2 - PADDLE_HEIGHT / 2;
-    aiY = canvas.height / 2 - PADDLE_HEIGHT / 2;
-    resetBall();
-    gameRunning = true;
-    gameOverScreen.classList.add('hidden');
-    requestAnimationFrame(update);
-}
+  resetBall() {
+    this.ballX = this.width / 2;
+    this.ballY = this.height / 2;
+    this.ballSpeedX = (Math.random() > 0.5 ? 1 : -1) * 5;
+    this.ballSpeedY = (Math.random() - 0.5) * 10;
+  }
 
-function resetBall() {
-    ballX = canvas.width / 2;
-    ballY = canvas.height / 2;
-    ballSpeedX = -ballSpeedX;
-    ballSpeedY = (Math.random() - 0.5) * 10;
-}
-
-function update() {
-    if (!gameRunning) return;
+  update() {
+    if (!this.gameRunning) return;
 
     // Move player
-    if (upPressed && playerY > 0) playerY -= 7;
-    if (downPressed && playerY < canvas.height - PADDLE_HEIGHT) playerY += 7;
+    if (this.upPressed && this.playerY > 0) this.playerY -= 7;
+    if (this.downPressed && this.playerY < this.height - this.paddleHeight) this.playerY += 7;
 
     // Move AI
-    const aiCenter = aiY + PADDLE_HEIGHT / 2;
-    if (aiCenter < ballY - 35) aiY += 5;
-    else if (aiCenter > ballY + 35) aiY -= 5;
+    const aiCenter = this.aiY + this.paddleHeight / 2;
+    if (aiCenter < this.ballY - 35) this.aiY += 5;
+    else if (aiCenter > this.ballY + 35) this.aiY -= 5;
+    
+    this.aiY = Math.max(0, Math.min(this.height - this.paddleHeight, this.aiY));
 
     // Move ball
-    ballX += ballSpeedX;
-    ballY += ballSpeedY;
+    this.ballX += this.ballSpeedX;
+    this.ballY += this.ballSpeedY;
 
     // Ball collision (top/bottom)
-    if (ballY < 0 || ballY > canvas.height - BALL_SIZE) {
-        ballSpeedY = -ballSpeedY;
+    if (this.ballY - this.ballRadius < 0 || this.ballY + this.ballRadius > this.height) {
+      this.ballSpeedY = -this.ballSpeedY;
     }
 
     // Ball collision (paddles)
-    if (ballX < PADDLE_WIDTH) {
-        if (ballY > playerY && ballY < playerY + PADDLE_HEIGHT) {
-            ballSpeedX = -ballSpeedX;
-            // Add some spin
-            const deltaY = ballY - (playerY + PADDLE_HEIGHT / 2);
-            ballSpeedY = deltaY * 0.35;
-        } else {
-            aiScore++;
-            checkWinner();
-            resetBall();
-        }
+    if (this.ballX - this.ballRadius < this.paddleWidth) {
+      if (this.ballY > this.playerY && this.ballY < this.playerY + this.paddleHeight) {
+        this.ballSpeedX = Math.abs(this.ballSpeedX) * 1.05;
+        const deltaY = this.ballY - (this.playerY + this.paddleHeight / 2);
+        this.ballSpeedY = deltaY * 0.35;
+      } else if (this.ballX < 0) {
+        this.aiScore++;
+        this.checkWinner();
+        if (this.gameRunning) this.resetBall();
+      }
     }
 
-    if (ballX > canvas.width - PADDLE_WIDTH - BALL_SIZE) {
-        if (ballY > aiY && ballY < aiY + PADDLE_HEIGHT) {
-            ballSpeedX = -ballSpeedX;
-            const deltaY = ballY - (aiY + PADDLE_HEIGHT / 2);
-            ballSpeedY = deltaY * 0.35;
-        } else {
-            playerScore++;
-            checkWinner();
-            resetBall();
-        }
+    if (this.ballX + this.ballRadius > this.width - this.paddleWidth) {
+      if (this.ballY > this.aiY && this.ballY < this.aiY + this.paddleHeight) {
+        this.ballSpeedX = -Math.abs(this.ballSpeedX) * 1.05;
+        const deltaY = this.ballY - (this.aiY + this.paddleHeight / 2);
+        this.ballSpeedY = deltaY * 0.35;
+      } else if (this.ballX > this.width) {
+        this.playerScore++;
+        this.checkWinner();
+        if (this.gameRunning) this.resetBall();
+      }
     }
+  }
 
-    draw();
-    if (gameRunning) requestAnimationFrame(update);
-}
-
-function checkWinner() {
-    if (playerScore >= WINNING_SCORE || aiScore >= WINNING_SCORE) {
-        gameRunning = false;
-        gameOverScreen.classList.remove('hidden');
-        winnerText.textContent = playerScore >= WINNING_SCORE ? '¡Has ganado!' : 'La IA ha ganado';
+  checkWinner() {
+    if (this.playerScore >= this.winningScore || this.aiScore >= this.winningScore) {
+      this.gameRunning = false;
+      if (this.gameOverScreen) {
+        this.gameOverScreen.classList.remove('hidden');
+        this.winnerText.textContent = this.playerScore >= this.winningScore ? '¡Has ganado!' : 'La IA ha ganado';
+      }
     }
-}
+  }
 
-function draw() {
+  draw() {
     // Clear canvas
-    ctx.fillStyle = '#000';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    this.ctx.fillStyle = '#111827';
+    this.ctx.fillRect(0, 0, this.width, this.height);
 
     // Draw net
-    ctx.setLineDash([5, 15]);
-    ctx.beginPath();
-    ctx.moveTo(canvas.width / 2, 0);
-    ctx.lineTo(canvas.width / 2, canvas.height);
-    ctx.strokeStyle = '#333';
-    ctx.stroke();
-    ctx.setLineDash([]);
+    this.ctx.setLineDash([5, 15]);
+    this.ctx.beginPath();
+    this.ctx.moveTo(this.width / 2, 0);
+    this.ctx.lineTo(this.width / 2, this.height);
+    this.ctx.strokeStyle = '#374151';
+    this.ctx.stroke();
+    this.ctx.setLineDash([]);
 
     // Draw paddles
-    ctx.fillStyle = '#3b82f6'; // Blue-500
-    ctx.fillRect(0, playerY, PADDLE_WIDTH, PADDLE_HEIGHT);
-    ctx.fillStyle = '#ef4444'; // Red-500
-    ctx.fillRect(canvas.width - PADDLE_WIDTH, aiY, PADDLE_WIDTH, PADDLE_HEIGHT);
+    this.ctx.fillStyle = '#3b82f6';
+    this.ctx.fillRect(0, this.playerY, this.paddleWidth, this.paddleHeight);
+    this.ctx.fillStyle = '#ef4444';
+    this.ctx.fillRect(this.width - this.paddleWidth, this.aiY, this.paddleWidth, this.paddleHeight);
 
     // Draw ball
-    ctx.fillStyle = '#fff';
-    ctx.beginPath();
-    ctx.arc(ballX, ballY, BALL_SIZE / 2, 0, Math.PI * 2);
-    ctx.fill();
+    this.ctx.fillStyle = '#ffffff';
+    this.ctx.beginPath();
+    this.ctx.arc(this.ballX, this.ballY, this.ballRadius, 0, Math.PI * 2);
+    this.ctx.fill();
 
-    // Draw score
-    ctx.font = '32px sans-serif';
-    ctx.fillStyle = '#3b82f6';
-    ctx.fillText(playerScore, canvas.width / 4, 50);
-    ctx.fillStyle = '#ef4444';
-    ctx.fillText(aiScore, (canvas.width / 4) * 3, 50);
+    // Draw scores
+    this.ctx.font = 'bold 32px sans-serif';
+    this.ctx.fillStyle = '#3b82f6';
+    this.ctx.fillText(this.playerScore, this.width / 4, 50);
+    this.ctx.fillStyle = '#ef4444';
+    this.ctx.fillText(this.aiScore, (this.width / 4) * 3, 50);
+  }
+
+  start() {
+    const loop = () => {
+      this.update();
+      this.draw();
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  }
 }
 
-update();
+// Instantiate and start the service
+(function() {
+  window.addEventListener('load', () => {
+    // Check for both possible canvas IDs
+    const canvas = document.getElementById('pongCanvas') || document.getElementById('pong-canvas');
+    if (canvas) {
+      const service = new PongService(canvas.id);
+      service.start();
+    }
+  });
+})();
