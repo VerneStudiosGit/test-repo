@@ -1,59 +1,69 @@
-# Plan: Add 3D Rotating Wireframe Cube to Landing Page
+# Plan: 3D Rotating Wireframe Cube on Landing Page
 
 ## Summary
 
-Add a rotating 3D wireframe cube to the landing page background using Three.js (loaded via CDN). The cube will be rendered on a full-screen canvas positioned behind the existing text content, creating a cool technological aesthetic. The cube will rotate continuously on both the X and Y axes, displayed as a wireframe with a subtle color that complements the existing design.
+Add a rotating 3D wireframe cube to the landing page (`index.html`) using Three.js loaded via CDN. The cube will be rendered on a full-screen canvas positioned behind the existing text content, creating a cool technological background effect. Since this is a static HTML project with no build tools (Tailwind CSS via CDN), Three.js will also be loaded via CDN, keeping the approach consistent with the existing architecture.
 
 ## Files to Create
 
 | File | Purpose |
 |------|---------|
-| `js/cube.js` | Three.js scene setup: camera, wireframe cube mesh, animation loop, and window resize handling |
+| `js/cube.js` | Three.js scene setup: creates a wireframe cube, camera, renderer, and animation loop. Handles window resizing. |
 
 ## Files to Modify
 
 | File | Changes |
 |------|---------|
-| `index.html` | 1. Add Three.js CDN `<script>` tag in `<head>` <br> 2. Add `<canvas>` element for the 3D scene as first child of `<body>` <br> 3. Add inline `<style>` to position the canvas as a fixed background layer <br> 4. Add `<script src="js/cube.js">` before closing `</body>` <br> 5. Set `<nav>` and `<main>` to `relative z-10` so content stays above the canvas |
+| `index.html` | 1. Add Three.js CDN `<script>` tag in `<head>`. 2. Add a `<canvas>` element for the 3D scene. 3. Add inline `<style>` to position the canvas as a fixed fullscreen background (behind all content via `z-index`). 4. Add `<script>` tag to load `js/cube.js` before `</body>`. 5. Add `relative z-10` Tailwind classes to nav and main so they stay above the canvas. |
 
 ## Implementation Steps
 
-1. **Create `js/` directory and `js/cube.js` file**
-   - Initialize a Three.js `Scene`, `PerspectiveCamera`, and `WebGLRenderer`
-   - Attach the renderer to a canvas element with id `bg-cube`
-   - Set renderer background to transparent (`alpha: true`) so the white page shows through
-   - Create a `BoxGeometry` and `MeshBasicMaterial` with `wireframe: true`
-   - Use a subtle color (e.g., `#3b82f6` — Tailwind blue-500) with some transparency
-   - Add the wireframe cube `Mesh` to the scene
-   - Position the camera so the cube appears large and centered
-   - Implement an `animate()` loop using `requestAnimationFrame` that rotates the cube on X and Y axes
-   - Add a `resize` event listener to keep the renderer and camera aspect ratio in sync with the viewport
+### Step 1: Create `js/cube.js`
 
-2. **Modify `index.html`**
-   - Add `<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>` in `<head>`
-   - Add a `<style>` block to position the canvas:
-     ```css
-     #bg-cube {
-       position: fixed;
-       top: 0;
-       left: 0;
-       width: 100%;
-       height: 100%;
-       z-index: 0;
-       pointer-events: none;
-     }
-     ```
-   - Add `<canvas id="bg-cube"></canvas>` as first child of `<body>`
-   - Add `relative z-10` Tailwind classes to `<nav>` and `<main>` so they render above the canvas
-   - Add `<script src="js/cube.js"></script>` before `</body>`
+Create a new `js/` directory and `js/cube.js` file with the following logic:
+
+- Use the global `THREE` object (loaded via CDN).
+- Create a `Scene`, `PerspectiveCamera`, and `WebGLRenderer` targeting a canvas element with id `bg-cube`.
+- Set renderer to fill the viewport with a transparent background (`alpha: true`).
+- Create a `BoxGeometry` (cube) and apply a `MeshBasicMaterial` with `wireframe: true` and color `#3b82f6` (Tailwind blue-500, matching the site's accent).
+- Add the wireframe cube `Mesh` to the scene.
+- Position the camera at `z = 3` so the cube is nicely visible and centered.
+- Create an `animate()` loop using `requestAnimationFrame` that rotates the cube slowly on both X and Y axes each frame.
+- Add a `window.resize` event listener to keep camera aspect ratio and renderer size in sync with viewport.
+
+### Step 2: Modify `index.html`
+
+- Add Three.js CDN script in `<head>` (after Tailwind):
+  ```html
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  ```
+
+- Add inline `<style>` block in `<head>`:
+  ```css
+  #bg-cube {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  ```
+
+- Add `<canvas id="bg-cube"></canvas>` as the first child inside `<body>`.
+
+- Add Tailwind utility classes `relative z-10` to the `<nav>` and `<main>` elements so they render above the canvas.
+
+- Add script tag before closing `</body>`:
+  ```html
+  <script src="js/cube.js"></script>
+  ```
 
 ## Testing
 
-1. **Visual check**: Open `index.html` in a browser and confirm:
-   - A wireframe cube is visible in the center of the page, rotating smoothly
-   - The cube appears behind the navbar and the "Hola a todos" text
-   - Text and links remain fully readable and clickable above the cube
-2. **Resize check**: Resize the browser window — the cube and canvas should adapt without distortion
-3. **Navigation check**: Click "About Us" and "Home" links — they should still work normally
-4. **Performance check**: Confirm smooth 60fps animation with no jank (check browser DevTools Performance tab)
-5. **Mobile check**: Open on a mobile viewport — cube should still render centered and text should remain legible
+1. **Visual verification**: Open `index.html` in a browser. A rotating wireframe cube should be visible centered on the page behind the "Hola a todos" text.
+2. **Text readability**: Confirm that the navbar and main heading text remain fully visible and clickable on top of the cube.
+3. **Responsiveness**: Resize the browser window — the canvas and cube should adapt to the new viewport size without clipping or overflow.
+4. **No scrollbars**: The canvas should not introduce extra scrollbars or affect page layout.
+5. **About page unaffected**: Navigate to `about.html` and confirm it is unchanged.
