@@ -24,7 +24,7 @@
 
     h1 > span {
       display: inline-block;
-      transition: transform 0.3s ease;
+      transition: transform 0.3s x-ease;
       cursor: pointer;
     }
 
@@ -148,6 +148,7 @@
       <a href="about.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500">About Us</a>
       <a href="todo.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500">To-do List</a>
       <a href="contact.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500">Contact</a>
+      <a href="pong.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500">Pong</a>
     </div>
   </nav>
   <main class="relative z-10 flex-1 flex flex-col items-center justify-center">
@@ -167,6 +168,16 @@
         <span class="text-pink-500">M</span><span class="text-red-500">a</span><span class="text-yellow-400">m</span><span class="text-pink-500">i</span>
       </h2>
     </section>
+    <div class="mt-12 relative z-10">
+      <canvas id="pongCanvas" width="600" height="400" class="rounded-lg shadow-2xl border-4 border-gray-700 dark:border-gray-600"></canvas>
+      <div id="game-over" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-75 text-white rounded-lg">
+        <h2 class="text-4xl font-bold mb-4">Game Over</h2>
+        <p id="winner-text" class="text-2xl mb-6"></p>
+        <button id="restart-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+          Jugar de nuevo
+        </button>
+      </div>
+    </div>
   </main>
 <footer class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300 py-8 border-t border-gray-200 dark:border-gray-800 relative z-10">
   <div class="container mx-auto px-6 flex flex-col items-center">
@@ -183,6 +194,7 @@
 </footer>
   <script src="js/storage.js"></script>
   <script src="js/cube.js"></script>
+  <script src="js/pong.js"></script>
   <script src="js/welcome-modal.js"></script>
   <script src="js/plane.js"></script>
   <script src="js/theme.js"></script>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pong Game</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+    }
+  </script>
+  <style>
+    canvas {
+      border: 2px solid #3b82f6;
+      background-color: #000;
+      max-width: 100%;
+      height: auto;
+    }
+  </style>
+</head>
+<body class="bg-white dark:bg-gray-900 min-h-screen flex flex-col transition-colors duration-300">
+  <nav class="bg-white dark:bg-gray-800 shadow-md px-6 py-4 flex items-center justify-between transition-colors duration-300">
+    <a href="index.html" class="text-xl font-bold">
+      <span class="text-blue-500">H</span><span class="text-red-500">o</span><span class="text-yellow-400">l</span><span class="text-blue-500">a</span>
+    </a>
+    <div class="flex gap-6 text-lg items-center">
+      <button id="theme-toggle" class="text-2xl hover:scale-110 transition-transform p-1" aria-label="Toggle Dark Mode">☀️</button>
+      <a href="index.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500">Home</a>
+      <a href="about.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500">About Us</a>
+      <a href="contact.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500">Contact</a>
+      <a href="pong.html" class="text-blue-500 font-semibold hover:text-blue-700">Pong</a>
+    </div>
+  </nav>
+
+  <main class="flex-1 flex flex-col items-center justify-center px-6 py-8">
+    <h1 class="text-4xl font-bold mb-8 text-gray-800 dark:text-white">
+      <span class="text-blue-500">P</span><span class="text-red-500">o</span><span class="text-yellow-400">n</span><span class="text-green-500">g</span>
+    </h1>
+    
+    <div class="relative">
+      <canvas id="pongCanvas" width="800" height="400" class="rounded-lg shadow-2xl"></canvas>
+      <div id="game-over" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-75 text-white rounded-lg">
+        <h2 class="text-4xl font-bold mb-4">Game Over</h2>
+        <p id="winner-text" class="text-2xl mb-6"></p>
+        <button id="restart-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+          Jugar de nuevo
+        </button>
+      </div>
+    </div>
+    
+    <div class="mt-8 text-gray-600 dark:text-gray-400 text-center max-w-md">
+      <p class="mb-2 italic">Usa las flechas <strong>Arriba</strong> y <strong>Abajo</strong> o <strong>W</strong> y <strong>S</strong> para mover tu paleta.</p>
+    </div>
+  </main>
+
+  <footer class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300 py-8 border-t border-gray-200 dark:border-gray-800 relative z-10">
+    <div class="container mx-auto px-6 flex flex-col items-center">
+      <p class="text-gray-600 dark:text-gray-400 mb-4 text-center">
+        © 2024 Agile Agents Playground. All rights reserved.
+      </p>
+      <div class="flex gap-6">
+        <a href="#" class="text-gray-400 hover:text-blue-500 font-medium transition-colors">Twitter</a>
+        <a href="#" class="text-gray-400 hover:text-blue-600 font-medium transition-colors">Facebook</a>
+        <a href="#" class="text-gray-400 hover:text-pink-500 font-medium transition-colors">Instagram</a>
+        <a href="#" class="text-gray-400 hover:text-gray-800 font-medium transition-colors">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/theme.js"></script>
+  <script src="js/pong.js"></script>
+</body>
+</html>
