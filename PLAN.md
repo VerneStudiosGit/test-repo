@@ -1,69 +1,62 @@
-# Plan: 3D Rotating Wireframe Cube on Landing Page
+# Plan: Animación de avión volando
 
 ## Summary
 
-Add a rotating 3D wireframe cube to the landing page (`index.html`) using Three.js loaded via CDN. The cube will be rendered on a full-screen canvas positioned behind the existing text content, creating a cool technological background effect. Since this is a static HTML project with no build tools (Tailwind CSS via CDN), Three.js will also be loaded via CDN, keeping the approach consistent with the existing architecture.
+Se implementará una animación de un avión (usando el emoji ✈️) que se desplaza continuamente de izquierda a derecha a través de la pantalla, simulando que está volando. Cuando el avión sale completamente por el borde derecho, reaparece por el borde izquierdo creando un efecto de loop infinito. La implementación seguirá los patrones existentes del proyecto: CSS `@keyframes` para la animación y un archivo JavaScript separado en `js/` con el patrón IIFE para controlar el comportamiento.
 
 ## Files to Create
 
 | File | Purpose |
 |------|---------|
-| `js/cube.js` | Three.js scene setup: creates a wireframe cube, camera, renderer, and animation loop. Handles window resizing. |
+| `js/plane.js` | Script que inicializa el elemento del avión y agrega variación aleatoria en la altura de vuelo entre cada ciclo usando el evento `animationiteration`. Usa el patrón IIFE consistente con `cube.js` y `welcome-modal.js`. |
 
 ## Files to Modify
 
 | File | Changes |
 |------|---------|
-| `index.html` | 1. Add Three.js CDN `<script>` tag in `<head>`. 2. Add a `<canvas>` element for the 3D scene. 3. Add inline `<style>` to position the canvas as a fixed fullscreen background (behind all content via `z-index`). 4. Add `<script>` tag to load `js/cube.js` before `</body>`. 5. Add `relative z-10` Tailwind classes to nav and main so they stay above the canvas. |
+| `index.html` | 1. Agregar estilos CSS para el avión (`#flying-plane`) con `position: fixed`, `z-index: 10`, `pointer-events: none` y la animación `@keyframes flyAcross` que mueve el avión de fuera de la pantalla por la izquierda hasta fuera por la derecha. 2. Agregar el elemento HTML `<div id="flying-plane">✈️</div>` en el body. 3. Agregar `<script src="js/plane.js"></script>` al final del body junto a los otros scripts. |
 
 ## Implementation Steps
 
-### Step 1: Create `js/cube.js`
+### 1. Agregar CSS en `index.html`
 
-Create a new `js/` directory and `js/cube.js` file with the following logic:
+Dentro del bloque `<style>` existente, agregar los estilos para `#flying-plane`:
+- `position: fixed` para que flote sobre el contenido
+- `top: 15%` para posicionarlo en la parte superior de la pantalla
+- `left: 0` como punto de referencia
+- `z-index: 10` para que esté por encima del contenido pero debajo del modal (z-index 50)
+- `font-size: 3rem` para un tamaño visible del emoji
+- `pointer-events: none` para no interferir con clics
+- `animation: flyAcross 8s linear infinite` para el movimiento continuo
 
-- Use the global `THREE` object (loaded via CDN).
-- Create a `Scene`, `PerspectiveCamera`, and `WebGLRenderer` targeting a canvas element with id `bg-cube`.
-- Set renderer to fill the viewport with a transparent background (`alpha: true`).
-- Create a `BoxGeometry` (cube) and apply a `MeshBasicMaterial` with `wireframe: true` and color `#3b82f6` (Tailwind blue-500, matching the site's accent).
-- Add the wireframe cube `Mesh` to the scene.
-- Position the camera at `z = 3` so the cube is nicely visible and centered.
-- Create an `animate()` loop using `requestAnimationFrame` that rotates the cube slowly on both X and Y axes each frame.
-- Add a `window.resize` event listener to keep camera aspect ratio and renderer size in sync with viewport.
+### 2. Agregar `@keyframes flyAcross`
 
-### Step 2: Modify `index.html`
+Definir la animación CSS:
+- `from { transform: translateX(-100px); }` — empieza fuera de la pantalla por la izquierda
+- `to { transform: translateX(calc(100vw + 100px)); }` — termina fuera de la pantalla por la derecha
+- `linear` timing para velocidad constante de vuelo
+- `infinite` para loop automático (al terminar, CSS reinicia desde `from`)
 
-- Add Three.js CDN script in `<head>` (after Tailwind):
-  ```html
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  ```
+### 3. Agregar elemento HTML en `index.html`
 
-- Add inline `<style>` block in `<head>`:
-  ```css
-  #bg-cube {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none;
-  }
-  ```
+Insertar `<div id="flying-plane">✈️</div>` después del `<canvas id="bg-cube">` y antes del `<nav>`, manteniendo el orden lógico de capas visuales.
 
-- Add `<canvas id="bg-cube"></canvas>` as the first child inside `<body>`.
+### 4. Crear `js/plane.js`
 
-- Add Tailwind utility classes `relative z-10` to the `<nav>` and `<main>` elements so they render above the canvas.
+Script con patrón IIFE que:
+- Selecciona el elemento `#flying-plane`
+- Escucha el evento `animationiteration` para detectar cuándo completa un ciclo
+- En cada iteración, cambia aleatoriamente la posición vertical (`top`) entre 10% y 80% para que el avión no siempre vuele a la misma altura exacta
 
-- Add script tag before closing `</body>`:
-  ```html
-  <script src="js/cube.js"></script>
-  ```
+### 5. Incluir el script en `index.html`
+
+Agregar `<script src="js/plane.js"></script>` después de los scripts existentes al final del `<body>`.
 
 ## Testing
 
-1. **Visual verification**: Open `index.html` in a browser. A rotating wireframe cube should be visible centered on the page behind the "Hola a todos" text.
-2. **Text readability**: Confirm that the navbar and main heading text remain fully visible and clickable on top of the cube.
-3. **Responsiveness**: Resize the browser window — the canvas and cube should adapt to the new viewport size without clipping or overflow.
-4. **No scrollbars**: The canvas should not introduce extra scrollbars or affect page layout.
-5. **About page unaffected**: Navigate to `about.html` and confirm it is unchanged.
+1. **Verificación visual**: Abrir `index.html` en el navegador y confirmar que el emoji ✈️ aparece y se desplaza suavemente de izquierda a derecha.
+2. **Loop infinito**: Esperar a que el avión salga por la derecha y verificar que reaparece por la izquierda sin saltos ni pausas visibles.
+3. **Variación de altura**: Después de varios ciclos, confirmar que el avión vuela a alturas distintas cada vez.
+4. **No interferencia**: Confirmar que el avión no bloquea clics en la navegación, el heading interactivo ni el botón del modal.
+5. **Responsive**: Verificar que la animación funciona correctamente en diferentes tamaños de ventana.
+6. **Coexistencia**: Confirmar que el cubo 3D, la animación de caracteres del heading y el modal de bienvenida siguen funcionando correctamente.
