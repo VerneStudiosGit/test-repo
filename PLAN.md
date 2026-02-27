@@ -1,83 +1,69 @@
-# Plan: Character Y-Axis Animation Based on Distance from Cursor
+# Plan: 3D Rotating Wireframe Cube on Landing Page
 
 ## Summary
 
-Add a CSS-only interactive animation to the "Hola a todos" heading where individual letter `<span>` elements animate along the Y axis based on their proximity to the cursor. When the user hovers over a character, that character rises the most (via `translateY`), and adjacent sibling characters rise progressively less, creating a wave/ripple effect. This will be achieved using CSS `:hover` combined with adjacent sibling selectors (`+`) and the `:has()` selector for previous-sibling targeting, along with CSS transitions for smooth movement.
+Add a rotating 3D wireframe cube to the landing page (`index.html`) using Three.js loaded via CDN. The cube will be rendered on a full-screen canvas positioned behind the existing text content, creating a cool technological background effect. Since this is a static HTML project with no build tools (Tailwind CSS via CDN), Three.js will also be loaded via CDN, keeping the approach consistent with the existing architecture.
 
 ## Files to Create
 
-None. All changes will be made inline in the existing `index.html`.
+| File | Purpose |
+|------|---------|
+| `js/cube.js` | Three.js scene setup: creates a wireframe cube, camera, renderer, and animation loop. Handles window resizing. |
 
 ## Files to Modify
 
 | File | Changes |
 |------|---------|
-| `index.html` | Add a `<style>` block with hover-based Y-axis animation using `:hover`, sibling combinators (`+`), and `:has()` for reverse-sibling targeting. Add `inline-block` and `transition` to letter spans. Adjust space spans so they participate as valid siblings in the selector chain. |
+| `index.html` | 1. Add Three.js CDN `<script>` tag in `<head>`. 2. Add a `<canvas>` element for the 3D scene. 3. Add inline `<style>` to position the canvas as a fixed fullscreen background (behind all content via `z-index`). 4. Add `<script>` tag to load `js/cube.js` before `</body>`. 5. Add `relative z-10` Tailwind classes to nav and main so they stay above the canvas. |
 
 ## Implementation Steps
 
-1. **Add `<style>` block in `<head>`** with the following CSS rules scoped to `h1 > span`:
-   - Base rule: `display: inline-block`, `transition: transform 0.3s ease`, `cursor: pointer`.
-   - Hovered span: `transform: translateY(-24px)` (strongest lift).
-   - 1-away siblings (forward: `span:hover + span`, backward: `span:has(+ span:hover)`): `transform: translateY(-16px)`.
-   - 2-away siblings (forward: `span:hover + span + span`, backward: `span:has(+ span + span:hover)`): `transform: translateY(-8px)`.
-   - 3-away siblings (forward/backward): `transform: translateY(-4px)`.
+### Step 1: Create `js/cube.js`
 
-2. **Fix space spans**: Convert empty `<span class="mx-2"></span>` to `<span class="mx-1">&nbsp;</span>` so they occupy space and participate as valid siblings in the hover chain.
+Create a new `js/` directory and `js/cube.js` file with the following logic:
 
-3. **Scope animation rules** to `h1 > span` only, keeping the subtitle `<p>` unaffected.
+- Use the global `THREE` object (loaded via CDN).
+- Create a `Scene`, `PerspectiveCamera`, and `WebGLRenderer` targeting a canvas element with id `bg-cube`.
+- Set renderer to fill the viewport with a transparent background (`alpha: true`).
+- Create a `BoxGeometry` (cube) and apply a `MeshBasicMaterial` with `wireframe: true` and color `#3b82f6` (Tailwind blue-500, matching the site's accent).
+- Add the wireframe cube `Mesh` to the scene.
+- Position the camera at `z = 3` so the cube is nicely visible and centered.
+- Create an `animate()` loop using `requestAnimationFrame` that rotates the cube slowly on both X and Y axes each frame.
+- Add a `window.resize` event listener to keep camera aspect ratio and renderer size in sync with viewport.
 
-4. **Fine-tune values**: Adjust `translateY` distances and `transition` duration/easing for a natural wave feel.
+### Step 2: Modify `index.html`
 
-## CSS Technique Details
+- Add Three.js CDN script in `<head>` (after Tailwind):
+  ```html
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  ```
 
-The key CSS selectors:
+- Add inline `<style>` block in `<head>`:
+  ```css
+  #bg-cube {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  ```
 
-```css
-/* The hovered character */
-h1 > span:hover {
-  transform: translateY(-24px);
-}
+- Add `<canvas id="bg-cube"></canvas>` as the first child inside `<body>`.
 
-/* Next sibling (1 away) */
-h1 > span:hover + span {
-  transform: translateY(-16px);
-}
+- Add Tailwind utility classes `relative z-10` to the `<nav>` and `<main>` elements so they render above the canvas.
 
-/* Previous sibling (1 away) — uses :has() */
-h1 > span:has(+ span:hover) {
-  transform: translateY(-16px);
-}
-
-/* 2 away forward */
-h1 > span:hover + span + span {
-  transform: translateY(-8px);
-}
-
-/* 2 away backward */
-h1 > span:has(+ span + span:hover) {
-  transform: translateY(-8px);
-}
-
-/* 3 away forward */
-h1 > span:hover + span + span + span {
-  transform: translateY(-4px);
-}
-
-/* 3 away backward */
-h1 > span:has(+ span + span + span:hover) {
-  transform: translateY(-4px);
-}
-```
-
-The `:has()` selector is supported in all modern browsers (Chrome 105+, Safari 15.4+, Firefox 121+).
+- Add script tag before closing `</body>`:
+  ```html
+  <script src="js/cube.js"></script>
+  ```
 
 ## Testing
 
-1. **Open `index.html` in a modern browser** (Chrome, Firefox, Safari).
-2. **Hover over individual letters** — the hovered letter should rise the most, neighbors should rise progressively less, creating a wave.
-3. **Move the cursor across the text** — the wave should follow smoothly due to CSS transitions.
-4. **Verify the subtitle** ("Bienvenidos a nuestra página") is not affected.
-5. **Verify spacing** between words is preserved.
-6. **Test responsiveness** — animation should work at both mobile and desktop text sizes.
-7. **Test browser compatibility** — confirm `:has()` selector works in Chrome, Firefox, and Safari.
+1. **Visual verification**: Open `index.html` in a browser. A rotating wireframe cube should be visible centered on the page behind the "Hola a todos" text.
+2. **Text readability**: Confirm that the navbar and main heading text remain fully visible and clickable on top of the cube.
+3. **Responsiveness**: Resize the browser window — the canvas and cube should adapt to the new viewport size without clipping or overflow.
+4. **No scrollbars**: The canvas should not introduce extra scrollbars or affect page layout.
+5. **About page unaffected**: Navigate to `about.html` and confirm it is unchanged.

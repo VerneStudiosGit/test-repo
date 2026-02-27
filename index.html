@@ -5,7 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hola a todos</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
+    #bg-cube {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
     h1 > span {
       display: inline-block;
       transition: transform 0.3s ease;
@@ -48,14 +59,27 @@
     }
   </style>
 </head>
-<body class="bg-white min-h-screen flex flex-col items-center justify-center">
-  <h1 class="text-6xl sm:text-8xl font-bold tracking-tight select-none">
-    <span class="text-blue-500">H</span><span class="text-red-500">o</span><span class="text-yellow-400">l</span><span class="text-blue-500">a</span>
-    <span class="mx-1">&nbsp;</span>
-    <span class="text-green-500">a</span>
-    <span class="mx-1">&nbsp;</span>
-    <span class="text-red-500">t</span><span class="text-blue-500">o</span><span class="text-yellow-400">d</span><span class="text-green-500">o</span><span class="text-red-500">s</span>
-  </h1>
-  <p class="mt-6 text-lg text-gray-400 tracking-wide">Bienvenidos a nuestra página</p>
+<body class="bg-white min-h-screen flex flex-col">
+  <canvas id="bg-cube"></canvas>
+  <nav class="relative z-10 bg-white shadow-md px-6 py-4 flex items-center justify-between">
+    <a href="index.html" class="text-xl font-bold">
+      <span class="text-blue-500">H</span><span class="text-red-500">o</span><span class="text-yellow-400">l</span><span class="text-blue-500">a</span>
+    </a>
+    <div class="flex gap-6 text-lg">
+      <a href="index.html" class="text-blue-500 font-semibold hover:text-blue-700">Home</a>
+      <a href="about.html" class="text-gray-600 hover:text-blue-500">About Us</a>
+    </div>
+  </nav>
+  <main class="relative z-10 flex-1 flex flex-col items-center justify-center">
+    <h1 class="text-6xl sm:text-8xl font-bold tracking-tight select-none">
+      <span class="text-blue-500">H</span><span class="text-red-500">o</span><span class="text-yellow-400">l</span><span class="text-blue-500">a</span>
+      <span class="mx-1">&nbsp;</span>
+      <span class="text-green-500">a</span>
+      <span class="mx-1">&nbsp;</span>
+      <span class="text-red-500">t</span><span class="text-blue-500">o</span><span class="text-yellow-400">d</span><span class="text-green-500">o</span><span class="text-red-500">s</span>
+    </h1>
+    <p class="mt-6 text-lg text-gray-400 tracking-wide">Bienvenidos a nuestra página</p>
+  </main>
+  <script src="js/cube.js"></script>
 </body>
 </html>
