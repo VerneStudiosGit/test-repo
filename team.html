@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>About Us</title>
+  <title>Team</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -20,22 +20,37 @@
     <div class="flex gap-6 text-lg items-center">
       <button id="theme-toggle" class="text-2xl hover:scale-110 transition-transform p-1" aria-label="Toggle Dark Mode">☀️</button>
       <a href="index.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500">Home</a>
-      <a href="about.html" class="text-blue-500 font-semibold hover:text-blue-700">About Us</a> 
-      <a href="team.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500">Team</a>
+      <a href="about.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500">About Us</a>
+      <a href="team.html" class="text-blue-500 font-semibold hover:text-blue-700">Team</a>
       <a href="todo.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500">To-do List</a>
       <a href="contact.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500">Contact</a>
       <a href="pong.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-500">Pong</a>
     </div>
   </nav>
   <main class="flex-1 flex flex-col items-center justify-center px-6">
-    <h1 class="text-4xl sm:text-6xl font-bold tracking-tight select-none">
-      <span class="text-blue-500">A</span><span class="text-red-500">b</span><span class="text-yellow-400">o</span><span class="text-blue-500">u</span><span class="text-green-500">t</span>
+    <h1 class="text-4xl sm:text-6xl font-bold tracking-tight select-none mb-8">
+      <span class="text-blue-500">O</span><span class="text-red-500">u</span><span class="text-yellow-400">r</span>
       <span class="mx-2"></span>
-      <span class="text-red-500">U</span><span class="text-blue-500">s</span>
+      <span class="text-green-500">T</span><span class="text-blue-500">e</span><span class="text-red-500">a</span><span class="text-yellow-400">m</span>
     </h1>
-    <p class="mt-6 text-lg text-gray-400 tracking-wide max-w-xl text-center">
-      Somos un equipo apasionado por la tecnología y la innovación. Nuestra misión es crear experiencias web increíbles.
-    </p>
+    
+    <div class="max-w-2xl text-center space-y-6">
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Esteban Devia Bedoya</h2>
+        <p class="text-blue-500 font-medium mb-4">CEO, Developer</p>
+        <p class="text-gray-600 dark:text-gray-300">
+          The only human in the team. Responsible for everything that requires a heartbeat.
+        </p>
+      </div>
+
+      <div class="p-6">
+        <h3 class="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-4">And a lot of robots... 🤖</h3>
+        <div class="grid grid-cols-3 sm:grid-cols-5 gap-4 text-4xl animate-pulse">
+          <span>🤖</span><span>👾</span><span>🦾</span><span>🦿</span><span>🖥️</span>
+          <span>🔌</span><span>🔋</span><span>📡</span><span>💾</span><span>🖱️</span>
+        </div>
+      </div>
+    </div>
   </main>
 <footer class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300 py-8 border-t border-gray-200 dark:border-gray-800 relative z-10">
   <div class="container mx-auto px-6 flex flex-col items-center">
