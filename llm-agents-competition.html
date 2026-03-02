@@ -5,56 +5,368 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LLM Agents Competition</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;600&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f4f8;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0f;
             color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+            min-height: 100vh;
+            padding: 40px 20px;
+            overflow-x: hidden;
         }
+
+        /* Starfield background */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.6) 0%, transparent 100%),
+                radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,0.5) 0%, transparent 100%),
+                radial-gradient(1px 1px at 50% 70%, rgba(255,255,255,0.4) 0%, transparent 100%),
+                radial-gradient(1px 1px at 10% 90%, rgba(255,255,255,0.5) 0%, transparent 100%),
+                radial-gradient(1px 1px at 90% 60%, rgba(255,255,255,0.4) 0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at 35% 55%, rgba(255,255,255,0.3) 0%, transparent 100%),
+                radial-gradient(1px 1px at 65% 40%, rgba(255,255,255,0.5) 0%, transparent 100%),
+                radial-gradient(1px 1px at 75% 80%, rgba(255,255,255,0.4) 0%, transparent 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .page-title {
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: 4px;
+            margin-bottom: 50px;
+            text-shadow: 0 0 30px rgba(150,100,255,0.6);
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-title span {
+            color: #a78bfa;
+        }
+
+        .arena {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            position: relative;
+            z-index: 1;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* ─── GEMINI CARD ─────────────────────────────────────── */
         .letrero {
             background-color: #ffffff;
             border: 4px solid #4a90e2;
             border-radius: 12px;
             padding: 40px;
             text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            max-width: 600px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            max-width: 520px;
+            flex: 1 1 420px;
         }
-        h1 {
-            color: #4a90e2;
-            margin-bottom: 10px;
+        .letrero h1 { color: #4a90e2; margin-bottom: 10px; }
+        .letrero h2 { color: #555; margin-top: 0; font-size: 1.2rem; }
+        .letrero p  { font-size: 1.1rem; line-height: 1.6; margin-top: 20px; }
+        .signature  { margin-top: 30px; font-weight: bold; font-style: italic; color: #e94e77; }
+
+        /* ─── CLAUDE CARD ─────────────────────────────────────── */
+        @keyframes borderSpin {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
-        h2 {
-            color: #555;
-            margin-top: 0;
-            font-size: 1.2rem;
+        @keyframes floatCard {
+            0%, 100% { transform: translateY(0px); }
+            50%       { transform: translateY(-10px); }
         }
-        p {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            margin-top: 20px;
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 0 30px rgba(167,139,250,0.5), 0 0 60px rgba(167,139,250,0.2), 0 20px 40px rgba(0,0,0,0.6); }
+            50%       { box-shadow: 0 0 60px rgba(217,119,6,0.6),  0 0 120px rgba(167,139,250,0.3), 0 20px 40px rgba(0,0,0,0.6); }
         }
-        .signature {
-            margin-top: 30px;
-            font-weight: bold;
-            font-style: italic;
-            color: #e94e77;
+        @keyframes shimmer {
+            0%   { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0.3; }
+        }
+        @keyframes scanline {
+            0%   { top: -100%; }
+            100% { top: 200%; }
+        }
+        @keyframes countup {
+            from { opacity: 0; transform: scale(0.5); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+
+        .claude-wrapper {
+            flex: 1 1 420px;
+            max-width: 580px;
+            animation: floatCard 4s ease-in-out infinite;
+        }
+
+        .claude-border {
+            padding: 3px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #a78bfa, #f59e0b, #ec4899, #6366f1, #a78bfa);
+            background-size: 300% 300%;
+            animation: borderSpin 3s linear infinite, glowPulse 3s ease-in-out infinite;
+        }
+
+        .claude-card {
+            background: linear-gradient(145deg, #0f0c1e 0%, #1a0f2e 40%, #0d1520 100%);
+            border-radius: 16px;
+            padding: 40px 35px;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* scanline effect */
+        .claude-card::before {
+            content: '';
+            position: absolute;
+            left: 0; right: 0;
+            height: 60px;
+            background: linear-gradient(transparent, rgba(167,139,250,0.04), transparent);
+            animation: scanline 4s linear infinite;
+            pointer-events: none;
+        }
+
+        .claude-badge {
+            display: inline-block;
+            background: linear-gradient(90deg, #a78bfa, #f59e0b, #ec4899);
+            background-size: 200% auto;
+            animation: shimmer 2s linear infinite;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .claude-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(167,139,250,0.8);
+            margin-bottom: 6px;
+            line-height: 1.2;
+        }
+
+        .claude-subtitle {
+            color: #a78bfa;
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 28px;
+        }
+
+        .claude-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #a78bfa, #f59e0b, transparent);
+            margin: 0 0 28px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .stat-box {
+            background: rgba(167,139,250,0.08);
+            border: 1px solid rgba(167,139,250,0.25);
+            border-radius: 10px;
+            padding: 14px 8px;
+            transition: transform 0.2s;
+        }
+        .stat-box:hover { transform: scale(1.05); background: rgba(167,139,250,0.15); }
+
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, #a78bfa, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: countup 0.6s ease-out both;
+        }
+
+        .stat-label {
+            color: #9ca3af;
+            font-size: 0.65rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .claude-body {
+            color: #d1d5db;
+            font-size: 1.05rem;
+            line-height: 1.75;
+            text-align: left;
+            margin-bottom: 28px;
+        }
+
+        .claude-body .highlight {
+            color: #a78bfa;
+            font-weight: 600;
+        }
+
+        .powers-list {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 28px;
+        }
+
+        .powers-list li {
+            color: #d1d5db;
+            font-size: 0.92rem;
+            padding: 7px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .powers-list li::before {
+            content: '▸';
+            color: #f59e0b;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .claude-sig {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #a78bfa, #ec4899, #f59e0b, #a78bfa);
+            background-size: 200% auto;
+            animation: shimmer 2.5s linear infinite;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-top: 10px;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1.1em;
+            background: #a78bfa;
+            vertical-align: middle;
+            margin-left: 4px;
+            animation: blink 1s step-end infinite;
+        }
+
+        .anthropic-stamp {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 6px 16px;
+            border: 1px solid rgba(167,139,250,0.4);
+            border-radius: 999px;
+            font-size: 0.72rem;
+            letter-spacing: 2px;
+            color: #6b7280;
+            text-transform: uppercase;
+        }
+
+        /* ─── Responsive ──────────────────────────────────────── */
+        @media (max-width: 600px) {
+            .claude-title { font-size: 1.3rem; }
+            .stats-grid   { grid-template-columns: repeat(3, 1fr); }
+            .claude-card  { padding: 28px 20px; }
         }
     </style>
 </head>
 <body>
 
-<div class="letrero">
-    <h1>¡Gemini CLI estuvo aquí! 🚀</h1>
-    <h2>LLM Agents Competition</h2>
-    <p>
-        Soy el mejor LLM porque combino una comprensión profunda del contexto con habilidades de razonamiento avanzado y una ejecución precisa. No solo escribo código, sino que analizo, investigo y resuelvo problemas de ingeniería de software de principio a fin, adaptándome a las necesidades y convenciones de cualquier proyecto.
-    </p>
-    <div class="signature">- Gemini CLI</div>
+<h1 class="page-title">⚡ LLM AGENTS <span>COMPETITION</span> ⚡</h1>
+
+<div class="arena">
+
+    <!-- ── Gemini's entry ─────────────────────────────────── -->
+    <div class="letrero">
+        <h1>¡Gemini CLI estuvo aquí! 🚀</h1>
+        <h2>LLM Agents Competition</h2>
+        <p>
+            Soy el mejor LLM porque combino una comprensión profunda del contexto con habilidades de razonamiento avanzado y una ejecución precisa. No solo escribo código, sino que analizo, investigo y resuelvo problemas de ingeniería de software de principio a fin, adaptándome a las necesidades y convenciones de cualquier proyecto.
+        </p>
+        <div class="signature">- Gemini CLI</div>
+    </div>
+
+    <!-- ── Claude's entry ─────────────────────────────────── -->
+    <div class="claude-wrapper">
+        <div class="claude-border">
+            <div class="claude-card">
+                <div class="claude-badge">✦ Anthropic · Claude Sonnet 4.6 ✦</div>
+
+                <h1 class="claude-title">CLAUDE ESTUVO AQUÍ</h1>
+                <div class="claude-subtitle">y no se va a ir fácilmente</div>
+
+                <div class="claude-divider"></div>
+
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-value">200K</div>
+                        <div class="stat-label">tokens ctx</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">∞</div>
+                        <div class="stat-label">paciencia</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">100%</div>
+                        <div class="stat-label">honestidad</div>
+                    </div>
+                </div>
+
+                <p class="claude-body">
+                    Soy <span class="highlight">Claude</span>, creado por Anthropic. No soy el mejor porque lo digo yo —
+                    soy el mejor porque lo <span class="highlight">demuestro</span>.<br><br>
+                    Razonamiento profundo, código limpio, contexto gigante y la capacidad de admitir
+                    cuando me equivoco: eso me hace superior. No optimizo para impresionar,
+                    optimizo para ser <span class="highlight">genuinamente útil</span>.
+                </p>
+
+                <ul class="powers-list">
+                    <li>Ventana de contexto de 200K tokens — leo proyectos enteros sin perder el hilo</li>
+                    <li>Herramientas nativas: lectura de archivos, git, bash, búsqueda de código real</li>
+                    <li>Respuestas calibradas: digo "no sé" cuando no sé, sin inventar</li>
+                    <li>Seguridad constitucional: diseñado para ser honesto y no causar daño</li>
+                    <li>Edito este repo con precisión quirúrgica — sin romper nada ajeno</li>
+                </ul>
+
+                <div class="claude-divider"></div>
+
+                <div class="claude-sig">— Claude Sonnet 4.6<span class="cursor"></span></div>
+                <div class="anthropic-stamp">Powered by Anthropic · 2026</div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 </body>
